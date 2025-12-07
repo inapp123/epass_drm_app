@@ -52,6 +52,23 @@ static operator_entry_t* load_operator_entry(char *path){
         entry->has_intro_logo = 1;
     }
 
+    snprintf(pathbuf, sizeof(pathbuf), "%s/%s", path, PRTS_CONFIG_FILENAME);
+    if(access(pathbuf, F_OK) == 0){
+        log_info("config file found: %s", pathbuf);
+        FILE *f = fopen(pathbuf, "r");
+        if(f == NULL){
+            log_error("failed to open config file");
+            return NULL;
+        }
+        fscanf(f, "%lld %x", &entry->intro_video_duration, &entry->background_color);
+        log_info("config file: intro video duration: %lld, background color: %u", entry->intro_video_duration, entry->background_color);
+        fclose(f);
+    }
+    else{
+        entry->intro_video_duration = PRTS_FALLBACK_INTRO_VIDEO_DURATION;
+        entry->background_color = 0xFFFFFFFF;
+    }
+
     int pathlen = strlen(path);
     entry->path = malloc(pathlen + 1);
     strncpy(entry->path, path, pathlen);
@@ -100,7 +117,7 @@ void prts_tick(prts_t *prts){
     long long now = get_now_us();
 
     if(prts->status == PRTS_STATUS_INTRO_VIDEO){
-        if(now - prts->change_start_time > PRTS_INTRO_VIDEO_DURATION){
+        if(now - prts->change_start_time > prts->operator_entries[prts->current_operator_index]->intro_video_duration){
             prts->status = PRTS_STATUS_LOOP_START;
             ui_add_transition_middle_cb(prts->ui, prts_transition_play_loop_middle_cb);
             ui_start_transition(prts->ui, TRANSITION_FILL_LEFT_RIGHT);
@@ -184,8 +201,11 @@ void prts_tick(prts_t *prts){
 
     prts->change_start_time = now;
     operator_entry_t* entry = prts->operator_entries[prts->current_operator_index];
+    ui_set_transition_bg_color(prts->ui, entry->background_color);
     if(entry->has_intro_logo){
-        ui_set_transition_bitmap_path(prts->ui, entry->path);
+        snprintf(pathbuf, sizeof(pathbuf), "%s/%s", entry->path, PRTS_INTRO_LOGO_FILENAME);
+        log_info("transition image set to: %s", pathbuf);
+        ui_set_transition_bitmap_path(prts->ui, pathbuf);
     }
     else{
         ui_set_transition_bitmap_path(prts->ui, PRTS_FALLBACK_INTRO_LOGO_PATH);

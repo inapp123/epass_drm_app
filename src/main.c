@@ -54,7 +54,7 @@ void enter_usb_download(){
 }
 
 void init_transition_middle_cb(){
-    drm_warpper_set_layer_position(&g_drm_warpper, DRM_WARPPER_LAYER_VIDEO, 4, 0);
+    drm_warpper_set_layer_position(&g_drm_warpper, DRM_WARPPER_LAYER_VIDEO, 0, 0);
 }
 
 void prts_transition_play_loop_middle_cb(){
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]){
 
     
     drm_warpper_init_layer(&g_drm_warpper, DRM_WARPPER_LAYER_UI, UI_WIDTH, UI_HEIGHT, DRM_WARPPER_LAYER_MODE_ARGB8888);
-    drm_warpper_set_layer_position(&g_drm_warpper, DRM_WARPPER_LAYER_UI, 0, 0);
+    drm_warpper_set_layer_position(&g_drm_warpper, DRM_WARPPER_LAYER_UI, 24, 0);
     uint8_t *ui_addr;
     drm_warpper_get_layer_buffer(&g_drm_warpper, DRM_WARPPER_LAYER_UI, &ui_addr);
 

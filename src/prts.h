@@ -10,6 +10,8 @@ typedef struct {
     int has_overlay_img;
     int has_intro_video;
     int has_intro_logo;
+    long long intro_video_duration;
+    uint32_t background_color;
 } operator_entry_t;
 
 typedef enum {

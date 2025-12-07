@@ -57,7 +57,7 @@ typedef struct {
     char transition_bitmap_path[128];
     char operator_info_path[128];
     void (*transition_middle_cb[UI_TRANSITION_MIDDLE_CB_COUNT])(void);
-
+    uint32_t transition_bg_color;
 } ui_t;
 
 void ui_init(ui_t *ui,int width,int height,uint32_t* vaddr,drm_warpper_t *drm_warpper);
@@ -68,3 +68,4 @@ void ui_start_transition(ui_t *ui,transition_state_t state);
 void ui_set_transition_bitmap_path(ui_t *ui,char *path);
 void ui_set_operator_info_path(ui_t *ui,char *path);
 void ui_add_transition_middle_cb(ui_t *ui,void (*cb)(void));
+void ui_set_transition_bg_color(ui_t *ui,uint32_t color);

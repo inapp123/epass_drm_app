@@ -270,7 +270,7 @@ static void ui_fire_transition_middle_cb(ui_t *ui){
 static void ui_transition_tick(ui_t *ui){
     if(ui->transition_state == TRANSITION_FILL_LEFT_RIGHT){
         for(int i = 0; i < UI_WIDTH; i++){
-            fbdraw_fill_rect(ui->drawer, i, 0, 1, UI_HEIGHT, UI_TEXT_COLOR);
+            fbdraw_fill_rect(ui->drawer, i, 0, 1, UI_HEIGHT, ui->transition_bg_color);
             usleep(UI_TRANSITION_LINE_SLEEP);
         }
         ui_fire_transition_middle_cb(ui);
@@ -285,7 +285,7 @@ static void ui_transition_tick(ui_t *ui){
         int center_x = (UI_WIDTH - UI_TRANSITION_LOGO_WIDTH) / 2;
         int center_y = (UI_HEIGHT - UI_TRANSITION_LOGO_HEIGHT) / 2;
         for(int i = 0; i < UI_HEIGHT; i++){
-            fbdraw_fill_rect(ui->drawer, 0, i, UI_WIDTH, 1, UI_TEXT_COLOR);
+            fbdraw_fill_rect(ui->drawer, 0, i, UI_WIDTH, 1, ui->transition_bg_color);
             if (i >= center_y && i < center_y + 256){
                 fbdraw_argb_bitmap_region_from_file(
                     ui->drawer, 
@@ -488,4 +488,8 @@ void ui_add_transition_middle_cb(ui_t *ui,void (*cb)(void)){
         }
     }
     log_error("transition middle cb count exceeded");
+}
+
+void ui_set_transition_bg_color(ui_t *ui,uint32_t color){
+    ui->transition_bg_color = color;
 }
