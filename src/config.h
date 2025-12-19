@@ -27,9 +27,9 @@
 #define UI_TRANSITION_LOGO_HOLD_TIME 500000ull
 #define UI_TRANSITION_MIDDLE_CB_COUNT 3
 
-#define UI_CONFIG_FILE_PATH "/root/epass_cfg.bin"
-#define UI_CONFIG_MAGIC 0x45504153434F4E46
-#define UI_CONFIG_VERSION 1
+#define SETTINGS_FILE_PATH "/root/epass_cfg.bin"
+#define SETTINGS_MAGIC 0x45504153434F4E46
+#define SETTINGS_VERSION 1
 
 #define UI_BATTERY_ADC_PATH "/sys/bus/iio/devices/iio:device0/in_voltage0_raw"
 #define UI_BATTERY_ADC_EMPTY_VALUE 2100

@@ -32,6 +32,8 @@ add_executable(epass_drm_app
   src/ui.c
   src/RREFont/RREFont.cpp
   src/prts.c
+  src/settings.c
+
 )
 
 target_include_directories(epass_drm_app PRIVATE
@@ -62,7 +64,6 @@ include_directories(/home/shirogane/Desktop/liulianpai/drm_app/backup/tina_multi
 
 
 set(CMAKE_LIBRARY_PATH "/home/shirogane/Desktop/liulianpai/cedarx_build/lib")
-target_link_libraries(epass_drm_app ${LIBEVDEV_LIBRARIES})
 
 
 target_link_libraries(epass_drm_app

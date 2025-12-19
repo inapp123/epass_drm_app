@@ -21,6 +21,7 @@ extern void prev_video();
 extern void enter_usb_download();
 extern bool ui_blocked();
 extern char* get_operator_list();
+extern void save_settings();
 
 
 long long get_now_us(void)
@@ -118,43 +119,6 @@ static void ui_draw_display_pic(ui_t *ui){
     }
 }
 
-static void ui_load_config(ui_t *ui){
-    FILE *f = fopen(UI_CONFIG_FILE_PATH, "rb");
-    ui_epass_config_t config;
-    if(f == NULL){
-        log_error("failed to open config file");
-        return;
-    }
-    fread(&config, sizeof(ui_epass_config_t), 1, f);
-    if(config.magic != UI_CONFIG_MAGIC){
-        log_error("invalid config file");
-        return;
-    }
-    if(config.version != UI_CONFIG_VERSION){
-        log_error("invalid config file version");
-        return;
-    }
-    ui->brightness = config.brightness;
-    ui->switch_interval = config.switch_interval;
-    ui->switch_mode = config.switch_mode;
-    set_brightness(config.brightness);
-    set_switch_interval(config.switch_interval);
-    set_switch_mode(config.switch_mode);
-    fclose(f);
-}
-
-
-static void ui_save_config(ui_t *ui){
-    FILE *f = fopen(UI_CONFIG_FILE_PATH, "wb");
-    ui_epass_config_t config;
-    config.magic = UI_CONFIG_MAGIC;
-    config.version = UI_CONFIG_VERSION;
-    config.brightness = ui->brightness;
-    config.switch_interval = ui->switch_interval;
-    config.switch_mode = ui->switch_mode;
-    fwrite(&config, sizeof(ui_epass_config_t), 1, f);
-    fclose(f);
-}
 
 static void ui_handle_key(ui_t *ui, int key){
 
@@ -213,13 +177,13 @@ static void ui_handle_key(ui_t *ui, int key){
                 if (ui->brightness < 10) {
                     ui->brightness++;
                     set_brightness(ui->brightness);
-                    ui_save_config(ui);
+                    save_settings();
                 }
             } else if (key == KEY_2) {
                 if (ui->brightness > 0) {
                     ui->brightness--;
                     set_brightness(ui->brightness);
-                    ui_save_config(ui);
+                    save_settings();
                 }
             } else if (key == KEY_3 || key == KEY_4) {
                 ui->state = UI_STATE_MAINMENU;
@@ -235,7 +199,7 @@ static void ui_handle_key(ui_t *ui, int key){
             } else if (key == KEY_3) {
                 ui->switch_interval = ui->hover_index;
                 set_switch_interval(ui->switch_interval);
-                ui_save_config(ui);
+                save_settings();
                 ui->state = UI_STATE_MAINMENU;
                 ui->hover_index = 1;
             } else if (key == KEY_4) {
@@ -252,7 +216,7 @@ static void ui_handle_key(ui_t *ui, int key){
             } else if (key == KEY_3) {
                 ui->switch_mode = ui->hover_index;
                 set_switch_mode(ui->switch_mode);
-                ui_save_config(ui);
+                save_settings();
                 ui->state = UI_STATE_MAINMENU;
                 ui->hover_index = 2;
             } else if (key == KEY_4) {
@@ -427,8 +391,6 @@ void ui_init(ui_t *ui, int width, int height, uint32_t *vaddr, drm_warpper_t *dr
     ui->transition_state = TRANSITION_NONE;
     ui->transition_start_time = 0;
     ui->drm_warpper = drm_warpper;
-
-    ui_load_config(ui);
 }
 
 void ui_tick(ui_t *ui){

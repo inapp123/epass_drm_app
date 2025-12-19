@@ -34,14 +34,6 @@ typedef enum {
 } transition_state_t;
 
 typedef struct {
-    uint64_t magic; // EPASCONF
-    uint32_t version;
-    int brightness;
-    sw_interval_t switch_interval;
-    sw_mode_t switch_mode;
-} ui_epass_config_t;
-
-typedef struct {
     fbdraw_t *drawer;
     CRREFont *font;
     ui_state_t state;

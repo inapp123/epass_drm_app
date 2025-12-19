@@ -3,10 +3,12 @@
 #include "log.h"
 #include <stdio.h>
 #include <signal.h>
+#include <string.h>
 #include <unistd.h>
 #include "config.h"
 #include "ui.h"
 #include "prts.h"
+#include "settings.h"
 
 
 static drm_warpper_t g_drm_warpper;
@@ -14,6 +16,8 @@ static mediaplayer_t g_mediaplayer;
 static fbdraw_t g_fbdraw;
 static ui_t g_ui;
 static prts_t g_prts;
+static settings_t g_settings;
+
 
 static int g_running = 1;
 void signal_handler(int sig)
@@ -77,6 +81,13 @@ bool ui_blocked(){
     return g_prts.status != PRTS_STATUS_IDLE;
 }
 
+void save_settings(){
+    g_settings.brightness = g_ui.brightness;
+    g_settings.switch_interval = g_ui.switch_interval;
+    g_settings.switch_mode = g_ui.switch_mode;
+    settings_save(&g_settings);
+}
+
 char* get_operator_list(){
     return prts_list_operators(&g_prts);
 }
@@ -118,6 +129,13 @@ int main(int argc, char *argv[]){
     char* list = prts_list_operators(&g_prts);
     log_info("operators list:\n", list);
     puts(list);
+
+    log_info("loading settings");
+    memset(&g_settings, 0, sizeof(settings_t));
+    settings_init(&g_settings);
+    set_brightness(g_settings.brightness);
+    set_switch_interval(g_settings.switch_interval);
+    set_switch_mode(g_settings.switch_mode);
     
 
     /* initialize DRM */
@@ -148,6 +166,10 @@ int main(int argc, char *argv[]){
     mediaplayer_set_output_buffer(&g_mediaplayer, video_vaddr);
     ui_init(&g_ui, UI_WIDTH, UI_HEIGHT, (uint32_t*)ui_addr, &g_drm_warpper);
     ui_add_transition_middle_cb(&g_ui, init_transition_middle_cb);
+
+    g_ui.brightness = g_settings.brightness;
+    g_ui.switch_interval = g_settings.switch_interval;
+    g_ui.switch_mode = g_settings.switch_mode;
 
     prts_next_operator(&g_prts);
     
