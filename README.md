@@ -1,3 +1,5 @@
+# 已重构，新项目地址：https://github.com/rhodesepass/drm_app_neo
+
 # 电子通行证播放器程序
 
 调用全志Cedar库，实现通行证视频播放/切换等功能。
